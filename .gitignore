@@ -1,6 +1,5 @@
 dist/
 build/
 node_modules/
-data/
 .env.local
 .env.*.local
