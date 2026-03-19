@@ -1,10 +1,29 @@
 # Polymarket Sports & Crypto Copy Trading Bot
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-polymarket--copy--trading--bot-181717?logo=github)](https://github.com/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot)
+[![Stars](https://img.shields.io/github/stars/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot?style=social)](https://github.com/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot/stargazers)
+
+**Repository:** [github.com/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot](https://github.com/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot) · **Organization:** [Polymarket Venture Team — London](https://github.com/polymarket-trading-bot-venture-team)
+
+---
+
 **Polymarket copy trading bot** for **sports**, **crypto** (e.g. BTC/ETH/SOL 15‑minute and other event markets), and **any** prediction market on Polymarket that has a CLOB—**politics, macro, props**, same stack. Mirror **top traders**’ fills onto **your** wallet with proportional sizing, spend limits, and optional **mempool** acceleration.
 
-Built in **TypeScript** (Node.js): **Data API** trade detection (`/trades`), optional **Alchemy** mempool bursts, **FOK** orders via [`@polymarket/clob-client`](https://www.npmjs.com/package/@polymarket/clob-client). Ideas from [XavTo/Bot-Polymarket](https://github.com/XavTo/Bot-Polymarket) (limits, strategies, `DRY_RUN`, state).
+Built in **TypeScript** (Node.js): **Data API** trade detection (`/trades`), optional **Alchemy** mempool bursts, **FOK** orders via [`@polymarket/clob-client`](https://www.npmjs.com/package/@polymarket/clob-client).
 
 > **Unofficial / community tool.** Not affiliated with Polymarket. Trading involves risk; this is not financial advice.
+
+### Quick start
+
+```bash
+git clone https://github.com/polymarket-trading-bot-venture-team/polymarket-copy-trading-bot.git
+cd polymarket-copy-trading-bot
+cp .env.example .env
+# Edit .env — never commit real keys (see Security)
+npm install
+```
+
+Related: [Polymarket copy trading](https://polymarket.com/copy-trading) (product context).
 
 ### Screenshots
 
@@ -98,8 +117,9 @@ Set `NO_COLOR=1` to disable colors.
 
 ```bash
 cp .env.example .env
-# Edit .env with your keys
 ```
+
+Edit `.env` with your keys. **Do not commit `.env`** to git (use `.gitignore`); only `.env.example` belongs in the repo.
 
 | Variable | Description |
 |----------|-------------|
@@ -152,20 +172,33 @@ docker run --env-file .env polymarket-copy-bot
 - **Approvals**: Exchange contract must have allowance for your conditional tokens (BUY) and USDC (SELL)
 - **Alchemy account** (optional): [dashboard.alchemy.com](https://dashboard.alchemy.com) for mempool detection
 
-## Project Structure
+## Project structure
 
 ```
-├── config.ts          # Settings from .env
-├── run.ts             # Entry point
+├── config.ts
+├── run.ts
 ├── src/
-│   ├── bot.ts         # Main orchestrator
-│   ├── detection.ts   # Trades poller + mempool watcher
-│   └── execution.ts  # CLOB order execution
+│   ├── bot.ts
+│   ├── detection.ts
+│   ├── execution.ts
+│   ├── state.ts
+│   ├── dataApi.ts
+│   ├── clobAuth.ts
+│   ├── clobErrors.ts
+│   └── log.ts
 ├── package.json
 ├── tsconfig.json
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+## GitHub Topics (SEO)
+
+Suggested **Topics** for this repo (Settings → General → Topics):  
+`polymarket`, `copy-trading`, `polymarket-trading-bot`, `prediction-markets`, `typescript`, `polygon`, `defi`, `web3`, `trading-bot`, `clob`, `sports-betting`, `crypto-trading`.
+
+Use a **short Description** on GitHub (one line), e.g.  
+*Open-source Polymarket copy trading bot (TypeScript): mirror leader wallets, Data API + optional mempool, CLOB FOK orders.*
 
 ## Troubleshooting
 
@@ -175,11 +208,8 @@ docker run --env-file .env polymarket-copy-bot
 | `the orderbook … does not exist` | That market has **no CLOB book** (resolved, closed, or not open yet). The bot **skips** these after a pre-check and logs a warning—no spam retries. |
 | `invalid signature` | Usually **(1)** wrong combo: `PRIVATE_KEY` must be from [reveal.magic.link/polymarket](https://reveal.magic.link/polymarket) for the **same** account as `PROFILE_ADDRESS` (proxy from [settings](https://polymarket.com/settings)). **(2)** Wrong `SIGNATURE_TYPE`: try **`2`** if **`1`** fails (Gnosis Safe–style proxy vs Polymarket proxy — same proxy address, different enum). **(3)** PC clock drift — keep `USE_SERVER_TIME=true` (default). **(4)** Revoke CLOB API keys in Polymarket and restart, or set **`CLOB_API_KEY` / `CLOB_API_SECRET` / `CLOB_API_PASSPHRASE`** for that account. **(5)** `SIGNATURE_TYPE=0` only for a plain funded EOA. |
 
-**Security:** Never paste logs that contain `POLY_API_KEY`, `POLY_PASSPHRASE`, or private keys. Rotate keys in Polymarket settings if exposed.
-
 ## Notes
 
 - **Sports & crypto markets**: Some marketable orders can have a short placement delay before matching (platform rules).
 - **Leader wallet**: Use the **proxy wallet** from the leader’s Polymarket profile, not an unrelated EOA.
 - **Mempool scope**: Alchemy only sees txs that hit its nodes—optional, not a guarantee for every leader path.
-- **Keywords**: *polymarket copy trading*, *polymarket sports bot*, *polymarket crypto bot*, *prediction markets*, *CLOB*, *Polygon*.
